@@ -1,6 +1,8 @@
+import 'package:bloc_demo_api/features/posts/bloc/post_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PostsPage extends StatefulWidget {
   const PostsPage({super.key});
@@ -10,10 +12,63 @@ class PostsPage extends StatefulWidget {
 }
 
 class _PostsPageState extends State<PostsPage> {
+  final PostBloc postBloc = PostBloc();
+
+  @override
+  void initState() {
+    postBloc.add(PostsInitialFetchEvent());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Posts Page')),
+      appBar: AppBar(
+        title: const Text('Posts Page'),
+      ),
+      floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () {
+            postBloc.add(PostAddEvent());
+          }),
+      body: BlocConsumer<PostBloc, PostState>(
+        bloc: postBloc,
+        listenWhen: ((previous, current) => current is PostsActionState),
+        buildWhen: (previous, current) => current is! PostsActionState,
+        listener: (context, state) {},
+        builder: (context, state) {
+          switch (state.runtimeType) {
+            case PostsFetchingLoadingState:
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            case PostFetchingSuccessfulState:
+              final successState = state as PostFetchingSuccessfulState;
+              return Container(
+                child: ListView.builder(
+                  itemCount: successState.posts.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      color: Colors.grey.shade200,
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(successState.posts[index].title),
+                          Text(successState.posts[index].body),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              );
+
+            default:
+              return const SizedBox();
+          }
+        },
+      ),
     );
   }
 }
