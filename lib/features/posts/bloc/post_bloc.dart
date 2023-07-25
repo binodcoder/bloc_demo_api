@@ -20,7 +20,6 @@ class PostBloc extends Bloc<PostEvent, PostState> {
 
   FutureOr<void> postAddEvent(PostAddEvent event, Emitter<PostState> emit) async {
     bool success = await PostsRepo.addPosts();
-    print(success);
     if (success) {
       emit(PostsAdditionSuccessState());
     } else {

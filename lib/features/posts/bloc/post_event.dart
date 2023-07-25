@@ -6,3 +6,5 @@ abstract class PostEvent {}
 class PostsInitialFetchEvent extends PostEvent {}
 
 class PostAddEvent extends PostEvent {}
+
+class PostListTabNavigateEvent extends PostEvent {}

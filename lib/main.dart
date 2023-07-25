@@ -2,7 +2,7 @@ import 'package:bloc_demo_api/features/posts/ui/posts_page.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
-  runApp(new MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
